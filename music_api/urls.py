@@ -8,6 +8,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from catalog.views import ArtistViewSet, AlbumViewSet
+from django.conf import settings
+from django.conf.urls.static import static
 
 # 1. Instanciamos el enrutador de Django REST Framework 
 router = DefaultRouter()
@@ -24,3 +26,7 @@ urlpatterns = [
     # Exponemos todo nuestro CRUD (tanto artistas como álbumes) bajo el prefijo /api/
     path('api/', include(router.urls)),
 ]
+
+# Permite que Django sirva las imágenes físicas durante el desarrollo local
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

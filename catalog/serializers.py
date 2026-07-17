@@ -1,21 +1,46 @@
+import base64
+from django.core.files.base import ContentFile
 from rest_framework import serializers
 from .models import Artist, Album
 
-# 1. PRIMERO definimos el álbum 
 class AlbumSerializer(serializers.ModelSerializer):
-    # Inyectamos el nombre del artista en el JSON para facilitarle la vida a React
     artist_name = serializers.ReadOnlyField(source='artist.name')
+    cover = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Album
-        fields = ['id', 'artist', 'artist_name', 'title', 'release_date', 'price', 'cover_url']
+        fields = ['id', 'artist', 'artist_name', 'title', 'release_date', 'cover']
 
-# 2. DESPUÉS definimos el artista, anidando el AlbumSerializer
+    def validate_cover(self, value):
+        if value and ';base64,' in value:
+            try:
+                format, imgstr = value.split(';base64,')
+                ext = format.split('/')[-1]
+                return ContentFile(
+                    base64.b64decode(imgstr),
+                    name=f'album_cover.{ext}'
+                )
+            except Exception:
+                raise serializers.ValidationError("La imagen no se encuentra con base64 válida.")
+        return value
+
 class ArtistSerializer(serializers.ModelSerializer):
-    # Relación inversa: Trae el catálogo del artista en una sola llamada REST
     albums = AlbumSerializer(many=True, read_only=True)
+    photo = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Artist
-        # Campos exactos de models.py + la relación 'albums'
-        fields = ['id', 'name', 'nationality', 'formed_date', 'bio', 'albums']
+        fields = ['id', 'name', 'nationality', 'formed_date', 'bio', 'photo', 'albums']
+
+    def validate_photo(self, value):
+        if value and ';base64,' in value:
+            try:
+                format, imgstr = value.split(';base64,')
+                ext = format.split('/')[-1]
+                return ContentFile(
+                    base64.b64decode(imgstr),
+                    name=f'artist_photo.{ext}'
+                )
+            except Exception:
+                raise serializers.ValidationError("La imagen no se encuentra con base64 válida.")
+        return value
