@@ -146,3 +146,11 @@ OAUTH2_PROVIDER = {
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope'},
     'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,
 }
+
+import os
+
+# URL pública desde la cual se servirán las fotos (ej. http://127.0.0.1:8000/media/artists/daft.jpg)
+MEDIA_URL = '/media/'
+
+# Ruta física absoluta en el disco duro donde se guardarán los archivos subidos
+MEDIA_ROOT = BASE_DIR / 'media'
