@@ -2,6 +2,7 @@ from django.db import models
 
 class Artist(models.Model):
     name = models.CharField(max_length=150)
+    genre = models.CharField(max_length=100, blank=True, null=True, verbose_name="Género Musical") 
     nationality = models.CharField(max_length=100, blank=True)
     formed_date = models.DateField(null=True, blank=True)
     bio = models.TextField(blank=True)
