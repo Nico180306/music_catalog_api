@@ -38,7 +38,7 @@ class ArtistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Artist
-        fields = ['id', 'name', 'nationality', 'formed_date', 'bio', 'photo', 'albums']
+        fields = ['id', 'name', 'genre', 'nationality', 'formed_date', 'bio', 'photo', 'albums']
 
     def validate_photo(self, value):
         if value and isinstance(value, str) and ';base64,' in value:
